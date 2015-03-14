@@ -7,6 +7,9 @@ public class Page {
 
 	private Map<String,String> properties; //this map properties and value match...
 
+	/**
+	 * @author Zompir
+	 */
 	public Page()
 	{
 		properties=new HashMap<String,String>();
