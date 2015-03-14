@@ -96,7 +96,7 @@ public class XmlAnalyzer {
 
 			if (hNode.getNodeType() == Node.ELEMENT_NODE) {
 				
-				if(hNode.hasAttributes())
+				if(hNode.hasAttributes()) 
 				{
 					NamedNodeMap hNodeMap=hNode.getAttributes();
 					for(int j=0;j<hNodeMap.getLength();j++)
