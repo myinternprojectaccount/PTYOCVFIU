@@ -118,7 +118,7 @@ public class XmlAnalyzer {
 							//child data attribute
 							header.setData(headerChild.getTextContent());
 							
-						}
+						}//bit bucket tayiz
 					}
 				}
 				headerList.add(header);
