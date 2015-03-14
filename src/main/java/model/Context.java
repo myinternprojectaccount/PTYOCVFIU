@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Context {
-//hasim seni nasil ekleyecem bakalim
+	//contextler
 	//volkan yaptigim degisikligi goruyon mu
 	private int contextId;
 	private int columnNo;

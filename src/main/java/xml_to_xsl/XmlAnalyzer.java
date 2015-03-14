@@ -85,7 +85,7 @@ public class XmlAnalyzer {
 				}
 				
 			}
-		}
+		}//analiz bitti
 	}
 
 	public void analyizeHeader(Document doc) throws Exception {
