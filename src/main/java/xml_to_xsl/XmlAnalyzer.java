@@ -1,40 +1,120 @@
 package xml_to_xsl;
 
 import java.io.File;
-import java.nio.file.attribute.AclEntry.Builder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+
+import model.Block;
+import model.Context;
+import model.Header;
+import model.Page;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import model.Page;
-import model.Header;
-import model.Context;
-
 public class XmlAnalyzer {
 	private List<Header> headerList;
 	private List<Context> contextList;
+	private List<Block> blockList;
+	private HashMap<String,String> bodyAttributes;
 	private Page page;
+	private Block[][] template_matrisi;
 
 	public XmlAnalyzer() {
 		headerList = new ArrayList<Header>();
 		contextList = new ArrayList<Context>();
+		blockList=new ArrayList<Block>();
+		bodyAttributes=new HashMap<String,String>();
 		page = new Page();
 	}
 
+	public void tasarimMatrisiHazirla()
+	{
+		//xml analizinden sonra gelen verilere gore tasarim matrisi olsuturulmasi
+		//matris yanyana gelen bloklarin icinden en cok yanyana gelenlerin sayisina gore sutun
+		//elde flow=bottom olanlarin sayisi kadar satir sayisi icermektedir.
+		int satir=0;int sutun=0;
+		//satir sayisi bulma
+		for(Block b:blockList)
+		{
+			if(b.getFlow().toString().toUpperCase().equals("FIRST") || b.getFlow().toString().toUpperCase().equals("BOTTOM"))
+			{
+				++satir;
+			}
+		}
+		//sutun sayisi bulma
+		for(Block b:blockList)
+		{
+			if(b.getType().toString().toUpperCase().equals("HEADER"))
+			{
+				if(sutun<b.getKomsular().size())
+				{
+					sutun=b.getKomsular().size();
+				}
+			}
+		}
+		template_matrisi=new Block[satir][sutun];
+		//template matrisine tasarim sablonu atamasi yapilmakta satir ve sutun eleman iceriyorsa 1 icermiyorsa 0 olur.
+		//blok listesinde bulunan block nesneleri matrise uygun bicimde yerlestirilir.
+		//once satirlari dolduralim
+		int temp=0;
+		for(Block b:blockList)
+		{
+			if(b.getFlow().toString().toUpperCase().equals("BOTTOM"))
+			{
+				template_matrisi[temp][0]=b;
+				++temp;
+				//burda matris asimi olabilir dikkatlice guncellenecek
+			}
+		}
+		//satirlara eklenen blocklarin komsulari varsa onlarda ayni satira ekleniyor.
+		for(int i=0;i<satir;i++)
+		{
+			if(template_matrisi[i][0].getKomsular().size()>0)
+			{
+				int k=0;
+				while(k<template_matrisi[i][0].getKomsular().size()) //satirlara atanmis blocklarin komsuluk dizisine bakip varsa 
+					//ayni satirda olacak sekilde ekliyoruz
+				{
+					for(Block t:blockList)
+					{
+						if(t.getBlock_id()==Integer.parseInt(template_matrisi[i][0].getKomsular().get(k)))
+						{
+							template_matrisi[i][k+1]=t;
+						}
+					}
+					++k;
+				}
+			}
+		}
+		//template matrisi olusturuldu...Bundan sonra template matrisi kullanarak Xsl donusumu yapilacaktir
+		//template matrisi kullanmanin amaci sayfanin kaymadan verilen genislik degerlerine gore uyumlu sekilde 
+		//olusturlmasinda referans olmasidir.
+		//template matrisine gore hem xsl hem de veri giris formu hazirlanacaktir.
+	}
+	public void komsulukHesaplama()
+	{
+		for(Block b:blockList)
+		{
+			List<String> temp=new ArrayList<String>();
+			for(Block t:blockList)
+			{
+				if(b.getBlock_id()==t.getFlow_ref_id())
+				{
+					temp.add(String.valueOf(t.getBlock_id()));
+				}
+			}
+			b.setKomsular(temp);
+		}
+	}
 	public void analyize() {
 		try {
 			File xml_file = new File("/home/volkan/bitirme/xml/deneme.xml");
@@ -233,6 +313,70 @@ public class XmlAnalyzer {
 			}
 		}
 	}
+	//body tagli elementin propeties attributelari hashmapte tutulmasi islemi
+	public void analyzeBody(Document doc) throws Exception
+	{
+		NodeList bodyList=doc.getElementsByTagName("body");
+		for(int i=0;i<bodyList.getLength();i++)
+		{
+			Node body=bodyList.item(i);
+			if(body.getNodeType()==Node.ELEMENT_NODE)
+			{
+				if(body.hasAttributes())
+				{
+					NamedNodeMap attributes=body.getAttributes();
+					for(int j=0;j<attributes.getLength();j++)
+					{
+						Node attr=attributes.item(j);
+						//put attributes to hashmap of body
+						bodyAttributes.put(attr.getNodeName().toString(), attr.getNodeValue().toString());
+					}
+				}
+			}
+		}
+	}
+	//uygulamanin asil xmlden analiz edilecek birimi web de div mantigi ile block mantigi olsuturulmasi dusunulmustur.
+	public void analyzeBlock(Document doc) throws Exception
+	{
+		NodeList blockNode=doc.getElementsByTagName("block");
+		for(int i=0;i<blockNode.getLength();i++)
+		{
+			Node node=blockNode.item(i);
+			Block block=new Block();
+			if(node.getNodeType()==Node.ELEMENT_NODE)
+			{
+				if(node.hasAttributes())
+				{
+					NamedNodeMap atributes=node.getAttributes();
+					for(int j=0;j<atributes.getLength();j++)
+					{
+						Node attr=atributes.item(j);
+						if(attr.getNodeName().toString().equals("id")) //id ozel olarak tutulmali
+						{
+							block.setBlock_id(Integer.parseInt(attr.getNodeValue().toString()));
+						}
+						else if(attr.getNodeName().toString().equals("flow")) //flow ozel olarak tutulmali
+						{
+							block.setFlow(attr.getNodeValue().toString());
+						}
+						else if(attr.getNodeName().toString().equals("type")) //type ozel olarak tutulmali
+						{
+							block.setType(attr.getNodeValue().toString());
+						} 
+						else if(attr.getNodeName().toString().equals("flow-ref")) //flow ref varsa bu deger de ozel olarak tutulmali
+						{
+							block.setFlow_ref_id(Integer.parseInt(attr.getNodeValue().toString()));
+						}
+						else //properties olarak ne olursa olsun dinamik olarak ekleniyor.
+						{
+							block.getProperties().put(attr.getNodeName().toString(), attr.getNodeValue().toString());
+						}
+					}
+				}
+				blockList.add(block);
+			}
+		}
+	}
 
 	public List<Header> getHeaderList() {
 		return headerList;
@@ -256,6 +400,22 @@ public class XmlAnalyzer {
 
 	public void setPage(Page page) {
 		this.page = page;
+	}
+
+	public List<Block> getBlockList() {
+		return blockList;
+	}
+
+	public void setBlockList(List<Block> blockList) {
+		this.blockList = blockList;
+	}
+
+	public HashMap<String, String> getBodyAttributes() {
+		return bodyAttributes;
+	}
+
+	public void setBodyAttributes(HashMap<String, String> bodyAttributes) {
+		this.bodyAttributes = bodyAttributes;
 	}
 	
 
