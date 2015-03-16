@@ -16,19 +16,11 @@ public class AppMain {
 		PdfCreator pdf=new PdfCreator();
 	    try
 		{
-			parser.convertToXsl();
+			parser.convertXslWithMatrix();
 			pdf.convertToPdf();
 		}catch(Exception e)
 		{
 			e.printStackTrace();
-		}
-		List<String> liste=new ArrayList<String>();
-		liste.add("3");
-		liste.add("4");
-		liste.add("5");
-		for(String s:liste)
-		{
-			System.out.println(s);
 		}
 	}
 	

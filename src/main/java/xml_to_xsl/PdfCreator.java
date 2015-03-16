@@ -25,8 +25,8 @@ public class PdfCreator {
             outDir.mkdirs();
  
             // Setup input and output files 
-            File xmlfile = new File(baseDir, "volkan/bitirme/xml/deneme.xml");
-            File xsltfile = new File(baseDir,"volkan/bitirme/xsl/denedik.xsl");
+            File xmlfile = new File(baseDir, "volkan/bitirme/xml/template.xml");
+            File xsltfile = new File(baseDir,"volkan/bitirme/xsl/denedik2.xsl");
             File pdffile = new File(outDir, "bitirme.pdf");
  
             System.out.println("Input: XML (" + xmlfile + ")");

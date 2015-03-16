@@ -27,6 +27,7 @@ public class XmlAnalyzer {
 	private HashMap<String,String> bodyAttributes;
 	private Page page;
 	private Block[][] template_matrisi;
+	private int satir,sutun;
 
 	public XmlAnalyzer() {
 		headerList = new ArrayList<Header>();
@@ -41,13 +42,14 @@ public class XmlAnalyzer {
 		//xml analizinden sonra gelen verilere gore tasarim matrisi olsuturulmasi
 		//matris yanyana gelen bloklarin icinden en cok yanyana gelenlerin sayisina gore sutun
 		//elde flow=bottom olanlarin sayisi kadar satir sayisi icermektedir.
-		int satir=0;int sutun=0;
+		satir=0;sutun=0;
 		//satir sayisi bulma
 		for(Block b:blockList)
 		{
-			if(b.getFlow().toString().toUpperCase().equals("FIRST") || b.getFlow().toString().toUpperCase().equals("BOTTOM"))
+			if(b.getFlow().toString().equals("first") || b.getFlow().toString().toUpperCase().equals("BOTTOM"))
 			{
 				++satir;
+				
 			}
 		}
 		//sutun sayisi bulma
@@ -61,6 +63,8 @@ public class XmlAnalyzer {
 				}
 			}
 		}
+		sutun+=1;
+		System.out.println(satir+"ve"+sutun);
 		template_matrisi=new Block[satir][sutun];
 		//template matrisine tasarim sablonu atamasi yapilmakta satir ve sutun eleman iceriyorsa 1 icermiyorsa 0 olur.
 		//blok listesinde bulunan block nesneleri matrise uygun bicimde yerlestirilir.
@@ -117,7 +121,7 @@ public class XmlAnalyzer {
 	}
 	public void analyize() {
 		try {
-			File xml_file = new File("/home/volkan/bitirme/xml/deneme.xml");
+			File xml_file = new File("/home/volkan/bitirme/xml/template.xml");
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -131,8 +135,13 @@ public class XmlAnalyzer {
 			// page node header nodes and context nodes
 			// page node
 			 analyizePage(doc);
-			 analyizeHeader(doc);
-			 contextAnalyize(doc);
+			 analyzeBody(doc);
+			 analyzeBlock(doc);
+			 komsulukHesaplama();
+			 tasarimMatrisiHazirla();
+			 
+			 //analyizeHeader(doc);
+			 //contextAnalyize(doc);
 			//test(doc);
 
 		} catch (Exception ex) {
@@ -417,6 +426,31 @@ public class XmlAnalyzer {
 	public void setBodyAttributes(HashMap<String, String> bodyAttributes) {
 		this.bodyAttributes = bodyAttributes;
 	}
+
+	public Block[][] getTemplate_matrisi() {
+		return template_matrisi;
+	}
+
+	public void setTemplate_matrisi(Block[][] template_matrisi) {
+		this.template_matrisi = template_matrisi;
+	}
+
+	public int getSatir() {
+		return satir;
+	}
+
+	public void setSatir(int satir) {
+		this.satir = satir;
+	}
+
+	public int getSutun() {
+		return sutun;
+	}
+
+	public void setSutun(int sutun) {
+		this.sutun = sutun;
+	}
+	
 	
 
 }
