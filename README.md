@@ -1,3 +1,3 @@
 # javaRepo
 
-(haþim)sys.out(Naber lan) 
+(hasim)sys.out("hee")
