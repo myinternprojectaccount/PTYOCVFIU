@@ -1,24 +1,26 @@
 package test;
 
 import org.apache.pdfbox.cos.COSName;
-   import org.apache.pdfbox.exceptions.InvalidPasswordException;
-   import org.apache.pdfbox.exceptions.WrappedIOException;
+import org.apache.pdfbox.exceptions.InvalidPasswordException;
+import org.apache.pdfbox.exceptions.WrappedIOException;
    
    import org.apache.pdfbox.pdmodel.PDDocument;
-   import org.apache.pdfbox.pdmodel.PDPage;
-   import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
-   import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
-   import org.apache.pdfbox.util.Matrix;
-   import org.apache.pdfbox.util.PDFOperator;
-   import org.apache.pdfbox.util.PDFStreamEngine;
-   import org.apache.pdfbox.util.ResourceLoader;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
+import org.apache.pdfbox.util.Matrix;
+import org.apache.pdfbox.util.PDFOperator;
+import org.apache.pdfbox.util.PDFStreamEngine;
+import org.apache.pdfbox.util.ResourceLoader;
    
+
    import java.awt.geom.AffineTransform;
-   import java.awt.geom.NoninvertibleTransformException;
-   import java.io.IOException;
+import java.awt.geom.NoninvertibleTransformException;
+import java.io.File;
+import java.io.IOException;
    
    import java.util.List;
-   import java.util.Map;
+import java.util.Map;
    
    /**
     * This is an example on how to get the x/y coordinates of image locations.
@@ -37,7 +39,7 @@ import org.apache.pdfbox.cos.COSName;
         */
        public PrintImageLocations() throws IOException
        {
-           super( ResourceLoader.loadProperties( "Resources/PDFTextStripper.properties", true ) );
+           super( ResourceLoader.loadProperties( "PDFTextStripper.properties", true ) );
        }
    
        /**
@@ -49,7 +51,7 @@ import org.apache.pdfbox.cos.COSName;
         */
        public static void main( String[] args ) throws Exception
        {
-           if( args.length != 1 )
+           if( false )
            {
                usage();
            }
@@ -58,7 +60,8 @@ import org.apache.pdfbox.cos.COSName;
                PDDocument document = null;
                try
                {
-                   document = PDDocument.load( args[0] );
+            	   File input = new File("/opt/burns.pdf");
+                   document = PDDocument.load( input );
                    if( document.isEncrypted() )
                    {
                        try
