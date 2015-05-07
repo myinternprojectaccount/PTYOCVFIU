@@ -1,3 +1,4 @@
+package test;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,7 +14,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDPixelMap;
 import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
-public class Simple {
+public class DrawRectangle {
 
     public static void main (String[] args) throws Exception {
         String outputFileName = "Simple.pdf";

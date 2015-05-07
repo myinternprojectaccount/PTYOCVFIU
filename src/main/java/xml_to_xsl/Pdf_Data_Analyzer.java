@@ -17,7 +17,7 @@ import model.Pdf_Data;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import test.PrintTextLocations;
+import pdf_reader.PrintTextLocations;
 
 public class Pdf_Data_Analyzer {
 	private static List<Pdf_Data> dataList;
@@ -45,10 +45,11 @@ public class Pdf_Data_Analyzer {
 		Document doc = builder.newDocument();
 		Element root=doc.createElement("template");
 		Element page=doc.createElement("page");
-		page.setAttribute("width", "");
-		page.setAttribute("height", "");
-		page.setAttribute("margin-left", "");
-		page.setAttribute("margin-top", "");
+		doc.appendChild(root);
+		page.setAttribute("width", "100");
+		page.setAttribute("height", "100");
+		page.setAttribute("margin-left", "5");
+		page.setAttribute("margin-top", "10");
 		root.appendChild(page);
 		int temp=0;
 		for(int i=0;i<xmlDataList.size();i++)
@@ -68,29 +69,41 @@ public class Pdf_Data_Analyzer {
 				element.setAttribute("margin-left",String.valueOf(left));
 				element.setAttribute("margin-top",String.valueOf(top));
 				element.setAttribute("width",String.valueOf(Math.round(xmlDataList.get(i).getWidth())));
-				element.setAttribute("font-size", "");
-				element.setAttribute("font-family", "");
+				element.setAttribute("font-size",String.valueOf(Math.round(dataList.get(i).getFont_size())));
+				element.setAttribute("font-family",dataList.get(i).getFont());
 				element.setAttribute("id", String.valueOf(i));
 				element.setAttribute("flow", "bottom");
 				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
 				root.appendChild(element);
+				continue;
 			}
 			if(i==xmlDataList.size()-1)
 			{
 				long left;
 				long top;
+				if(String.valueOf(xmlDataList.get(i).getY1()).equals(String.valueOf(xmlDataList.get(i).getY1())))
+				{
+					left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
+					top=Math.round(dataList.get(i).getY()-xmlDataList.get(temp).getY1());
+				}
+				else
+				{
+					left=Math.round(xmlDataList.get(i).getX1());
+					top=Math.round(dataList.get(i).getY()-xmlDataList.get(temp).getY1());
+				}
 				left=Math.round(xmlDataList.get(i).getX1());
 				top=Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(i-1).getY1());//hop bidakka:D onceki hesaplama
-				Element element=doc.createElement("block");
-				element.setAttribute("margin-left", "");
-				element.setAttribute("margin-top", "");
-				element.setAttribute("width", "");
-				element.setAttribute("font-size", "");
-				element.setAttribute("font-family", "");
+				Element element=doc.createElement("block");//burda ince hesap yapmak lazims
+				element.setAttribute("margin-left",String.valueOf(left));
+				element.setAttribute("margin-top",String.valueOf(top));
+				element.setAttribute("width",String.valueOf(dataList.get(i).getWidth()));
+				element.setAttribute("font-size",String.valueOf(Math.round(dataList.get(i).getFont_size())));
+				element.setAttribute("font-family",dataList.get(i).getFont());
 				element.setAttribute("id", String.valueOf(i));
 				element.setAttribute("flow", "bottom");
 				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
 				root.appendChild(element);
+				
 				break;
 			}
 			if(String.valueOf(xmlDataList.get(i).getY1()).equals(String.valueOf(xmlDataList.get(i+1).getY1())))
@@ -101,20 +114,21 @@ public class Pdf_Data_Analyzer {
 				{
 					value=0;
 				}
-				else
+				else if(temp==0)
 				{
 					value=temp-1;
 				}
 				long left;
 				long top;
+				System.out.println("value:"+value);
 				top=Math.round(dataList.get(i).getY()-xmlDataList.get(value).getY1());
 				left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
 				Element element=doc.createElement("block");
 				element.setAttribute("margin-left",String.valueOf(left));
 				element.setAttribute("margin-top",String.valueOf(top));
 				element.setAttribute("width",String.valueOf(dataList.get(i).getWidth()));
-				element.setAttribute("font-size", "");
-				element.setAttribute("font-family", "");
+				element.setAttribute("font-size",String.valueOf(Math.round(dataList.get(i).getFont_size())));
+				element.setAttribute("font-family",dataList.get(i).getFont());
 				element.setAttribute("id", String.valueOf(i));
 				element.setAttribute("flow", "near");
 				element.setAttribute("flow-ref",String.valueOf(temp));
@@ -129,8 +143,8 @@ public class Pdf_Data_Analyzer {
 				element.setAttribute("margin-left",String.valueOf(xmlDataList.get(i).getX1()));
 				element.setAttribute("margin-top",String.valueOf(Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(i).getY1())));
 				element.setAttribute("width",String.valueOf(xmlDataList.get(i).getWidth()));
-				element.setAttribute("font-size", "");
-				element.setAttribute("font-family", "");
+				element.setAttribute("font-size", String.valueOf(Math.round(dataList.get(i).getFont_size())));
+				element.setAttribute("font-family",dataList.get(i).getFont());
 				element.setAttribute("id", String.valueOf(i));
 				element.setAttribute("flow", "bottom");
 				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
@@ -140,12 +154,11 @@ public class Pdf_Data_Analyzer {
 		}
 		
 		//olusan xml dosyasini yazdirma
-		TransformerFactory transformerFactory = TransformerFactory
-				.newInstance();
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(new File(
-				"/home/volkan/bitirme/xml/pdf_to_xml.xmls").getPath());
+				"/home/volkan/bitirme/xml/pdf_to_xml.xml").getPath());
 
 		transformer.transform(source, result);
 
@@ -200,6 +213,8 @@ public class Pdf_Data_Analyzer {
 				stb.append(dataList.get(i).getC_data());
 				dtx.setX1(temp.getX());
 				dtx.setY1(temp.getY());
+				dtx.setFont(temp.getFont());
+				dtx.setFont_size(temp.getFont_size());
 				dtx.setHeight(temp.getHeight());
 				dtx.setWidth(dataList.get(i).getX()-temp.getX());
 				dtx.setData(stb.toString());
@@ -222,6 +237,8 @@ public class Pdf_Data_Analyzer {
 					stb.append(dataList.get(i).getC_data());
 					dtx.setX1(temp.getX());
 					dtx.setY1(temp.getY());
+					dtx.setFont(temp.getFont());
+					dtx.setFont_size(temp.getFont_size());
 					dtx.setHeight(temp.getHeight());
 					dtx.setWidth(dataList.get(i).getX()-temp.getX());
 					dtx.setData(stb.toString());
@@ -237,6 +254,8 @@ public class Pdf_Data_Analyzer {
 				stb.append(dataList.get(i).getC_data());
 				dtx.setX1(temp.getX());
 				dtx.setY1(temp.getY());
+				dtx.setFont(temp.getFont());
+				dtx.setFont_size(temp.getFont_size());
 				dtx.setHeight(temp.getHeight());
 				dtx.setWidth(dataList.get(i).getX()-temp.getX());
 				dtx.setData(stb.toString());

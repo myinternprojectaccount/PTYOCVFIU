@@ -1,12 +1,15 @@
+package test;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
+
+import org.apache.fontbox.afm.Composite;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.PDGraphicsState;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColorSpace;
+import org.apache.pdfbox.pdmodel.text.PDTextState;
 import org.apache.pdfbox.util.PDFTextStripper;
 import org.apache.pdfbox.util.ResourceLoader;
 import org.apache.pdfbox.util.TextPosition;
@@ -45,7 +48,7 @@ protected void processTextPosition2(TextPosition text) {
         Color col;
         switch(this.getGraphicsState().getTextState().getRenderingMode()) {
         case PDTextState.RENDERING_MODE_FILL_TEXT:
-            com = this.getGraphicsState().getNonStrokeJavaComposite();
+            com = (Composite) this.getGraphicsState().getNonStrokeJavaComposite();
             int r =       this.getGraphicsState().getNonStrokingColor().getJavaColor().getRed();
             int g = this.getGraphicsState().getNonStrokingColor().getJavaColor().getGreen();
             int b = this.getGraphicsState().getNonStrokingColor().getJavaColor().getBlue();

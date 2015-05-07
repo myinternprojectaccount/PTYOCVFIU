@@ -6,6 +6,22 @@ public class Data_To_Xml {
 	private String data;
 	private double width;
 	private double height;
+	private float font_size;
+	private String font;
+	
+	
+	public float getFont_size() {
+		return font_size;
+	}
+	public void setFont_size(float font_size) {
+		this.font_size = font_size;
+	}
+	public String getFont() {
+		return font;
+	}
+	public void setFont(String font) {
+		this.font = font;
+	}
 	public double getX1() {
 		return x1;
 	}

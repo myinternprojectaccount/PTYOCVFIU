@@ -8,8 +8,23 @@ public class Pdf_Data {
 	private double width;
 	private double yscale;
 	private String c_data;
+	private String font;
+	private float font_size;
 	
 	
+	
+	public String getFont() {
+		return font;
+	}
+	public void setFont(String font) {
+		this.font = font;
+	}
+	public float getFont_size() {
+		return font_size;
+	}
+	public void setFont_size(float font_size) {
+		this.font_size = font_size;
+	}
 	public String getC_data() {
 		return c_data;
 	}

@@ -1,4 +1,4 @@
-package test;
+package pdf_reader;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,6 +64,8 @@ public class PrintTextLocations extends PDFTextStripper {
     	data.setWidth(text.getWidthDirAdj());
     	data.setYscale(text.getYScale());
     	data.setC_data(text.getCharacter());
+    	data.setFont(text.getFont().toString());
+    	data.setFont_size(text.getFontSize());
     	main.getDataList().add(data);
     	
     	

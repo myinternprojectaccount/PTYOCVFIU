@@ -18,6 +18,14 @@ public class Create_Data_Xml {
 		Pdf_Data_Analyzer	da=new Pdf_Data_Analyzer();
 		da.getData();
 		da.setXmlData();
+		try
+		{
+			da.create_Xml();
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 		System.out.println(da.getXmlDataList().size());
 		for(Data_To_Xml d:da.getXmlDataList())
 		{
