@@ -42,7 +42,7 @@ protected void processTextPosition(TextPosition text) {
 
 }
 
-protected void processTextPosition2(TextPosition text) {
+protected void processTextPosition2(TextPosition text) throws IOException {
 
         Composite com;
         Color col;
@@ -70,20 +70,21 @@ protected void processTextPosition2(TextPosition text) {
         default:
             System.out.println(this.getGraphicsState().getNonStrokeJavaComposite().toString());
             System.out.println(this.getGraphicsState().getNonStrokingColor().getJavaColor().getRGB());
+        }
             
-        if (operation.equals("RG")) {
-   // stroking color space
-   System.out.println(operation);
-   System.out.println(arguments);
-} else if (operation.equals("rg")) {
-   // non-stroking color space
-   System.out.println(operation);
-   System.out.println(arguments);
-} else if (operation.equals("BT")) {
-   System.out.println(operation);    
-} else if (operation.equals("ET")) {
-   System.out.println(operation);           
-}
+//        if (operation.equals("RG")) {
+//   // stroking color space
+//   System.out.println(operation);
+//   System.out.println(arguments);
+//} else if (operation.equals("rg")) {
+//   // non-stroking color space
+//   System.out.println(operation);
+//   System.out.println(arguments);
+//} else if (operation.equals("BT")) {
+//   System.out.println(operation);    
+//} else if (operation.equals("ET")) {
+//   System.out.println(operation);           
+//}
 
     }
 

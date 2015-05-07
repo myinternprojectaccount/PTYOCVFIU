@@ -25,7 +25,7 @@ public class PrintTextLocations extends PDFTextStripper {
 
         PDDocument document = null;
         try {
-            File input = new File("/home/volkan/bitirme/pdf/bitirme.pdf");
+            File input = new File("C:\\games\\sample.pdf");
             document = PDDocument.load(input);
             if (document.isEncrypted()) {
                 document.decrypt("");

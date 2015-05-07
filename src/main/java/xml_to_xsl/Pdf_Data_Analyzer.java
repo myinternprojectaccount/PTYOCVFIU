@@ -158,7 +158,7 @@ public class Pdf_Data_Analyzer {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(new File(
-				"/home/volkan/bitirme/xml/pdf_to_xml.xml").getPath());
+				"C:\\games\\olusan.xml").getPath());
 
 		transformer.transform(source, result);
 
