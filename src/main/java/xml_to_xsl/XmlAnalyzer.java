@@ -11,8 +11,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import model.Block;
-import model.Context;
-import model.Header;
 import model.Page;
 
 import org.w3c.dom.Document;
@@ -21,107 +19,45 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XmlAnalyzer {
-	private List<Header> headerList;
-	private List<Context> contextList;
 	private List<Block> blockList;
 	private HashMap<String,String> bodyAttributes;
 	private Page page;
-	private Block[][] template_matrisi;
-	private int satir,sutun;
 
 	public XmlAnalyzer() {
-		headerList = new ArrayList<Header>();
-		contextList = new ArrayList<Context>();
 		blockList=new ArrayList<Block>();
 		bodyAttributes=new HashMap<String,String>();
 		page = new Page();
 	}
-
-	public void tasarimMatrisiHazirla()
-	{
-		//xml analizinden sonra gelen verilere gore tasarim matrisi olsuturulmasi
-		//matris yanyana gelen bloklarin icinden en cok yanyana gelenlerin sayisina gore sutun
-		//elde flow=bottom olanlarin sayisi kadar satir sayisi icermektedir.
-		satir=0;sutun=0;
-		//satir sayisi bulma
-		for(Block b:blockList)
-		{
-			if(b.getFlow().toString().equals("first") || b.getFlow().toString().toUpperCase().equals("BOTTOM"))
-			{
-				++satir;
-				
-			}
-		}
-		//sutun sayisi bulma
-		for(Block b:blockList)
-		{
-			if(b.getType().toString().toUpperCase().equals("HEADER"))
-			{
-				if(sutun<b.getKomsular().size())
-				{
-					sutun=b.getKomsular().size();
-				}
-			}
-		}
-		sutun+=1;
-		System.out.println(satir+"ve"+sutun);
-		template_matrisi=new Block[satir][sutun];
-		//template matrisine tasarim sablonu atamasi yapilmakta satir ve sutun eleman iceriyorsa 1 icermiyorsa 0 olur.
-		//blok listesinde bulunan block nesneleri matrise uygun bicimde yerlestirilir.
-		//once satirlari dolduralim
-		int temp=0;
-		for(Block b:blockList)
-		{
-			if(b.getFlow().toString().toUpperCase().equals("BOTTOM"))
-			{
-				template_matrisi[temp][0]=b;
-				++temp;
-				//burda matris asimi olabilir dikkatlice guncellenecek
-			}
-		}
-		//satirlara eklenen blocklarin komsulari varsa onlarda ayni satira ekleniyor.
-		for(int i=0;i<satir;i++)
-		{
-			if(template_matrisi[i][0].getKomsular().size()>0)
-			{
-				int k=0;
-				while(k<template_matrisi[i][0].getKomsular().size()) //satirlara atanmis blocklarin komsuluk dizisine bakip varsa 
-					//ayni satirda olacak sekilde ekliyoruz
-				{
-					for(Block t:blockList)
-					{
-						if(t.getBlock_id()==Integer.parseInt(template_matrisi[i][0].getKomsular().get(k)))
-						{
-							template_matrisi[i][k+1]=t;
-						}
-					}
-					++k;
-				}
-			}
-		}
-		//template matrisi olusturuldu...Bundan sonra template matrisi kullanarak Xsl donusumu yapilacaktir
-		//template matrisi kullanmanin amaci sayfanin kaymadan verilen genislik degerlerine gore uyumlu sekilde 
-		//olusturlmasinda referans olmasidir.
-		//template matrisine gore hem xsl hem de veri giris formu hazirlanacaktir.
-	}
 	public void komsulukHesaplama()
 	{
+		System.out.println(blockList.size());
+		
 		for(Block b:blockList)
 		{
-			List<String> temp=new ArrayList<String>();
-			for(Block t:blockList)
+			if(b.getFlow_ref_id()==0)
 			{
-				if(b.getBlock_id()==t.getFlow_ref_id())
+				for(Block bx:blockList)
 				{
-					temp.add(String.valueOf(t.getBlock_id()));
+					if(b.getBlock_id()==bx.getFlow_ref_id())
+					{
+						if(b.getBlock_id()==bx.getBlock_id())
+						{
+							continue;
+						}
+						b.getKomsular().add(bx);
+					}
 				}
 			}
-			b.setKomsular(temp);
+			
+		}
+		for(Block b:blockList)
+		{
+			System.out.println(b.getKomsular().size());
 		}
 	}
 	public void analyize() {
 		try {
-			File xml_file = new File("/home/volkan/bitirme/xml/template.xml");
+			File xml_file = new File("/home/volkan/bitirme/xml/pdf_to_xml.xml");
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -138,11 +74,6 @@ public class XmlAnalyzer {
 			 analyzeBody(doc);
 			 analyzeBlock(doc);
 			 komsulukHesaplama();
-			 tasarimMatrisiHazirla();
-			 
-			 //analyizeHeader(doc);
-			 //contextAnalyize(doc);
-			//test(doc);
 
 		} catch (Exception ex) {
 			//attribute olarak alinan verilerin xsl de tanimlanirken hata olusturmamasi kontrolunu saglamak gerekli.
@@ -175,152 +106,6 @@ public class XmlAnalyzer {
 				
 			}
 		}//analiz bitti
-	}
-
-	public void analyizeHeader(Document doc) throws Exception {
-		NodeList hList = doc.getElementsByTagName("header");
-		for (int i = 0; i < hList.getLength(); i++) {
-			Node hNode = hList.item(i);
-			Header header = new Header();
-
-			if (hNode.getNodeType() == Node.ELEMENT_NODE) {
-				
-				if(hNode.hasAttributes()) 
-				{
-					NamedNodeMap hNodeMap=hNode.getAttributes();
-					for(int j=0;j<hNodeMap.getLength();j++)
-					{
-						Node node=hNodeMap.item(j);
-						//ozellikler hashMap al
-						header.getProperties().put(node.getNodeName(), node.getNodeValue());
-					}
-				}
-				if(hNode.hasChildNodes())
-				{
-					NodeList hChild=hNode.getChildNodes();
-					for(int k=0;k<hChild.getLength();k++)
-					{
-						Node headerChild=hChild.item(k);
-						if(headerChild.getNodeType()==Node.ELEMENT_NODE)
-						{
-							
-							//child data attribute
-							header.setData(headerChild.getTextContent());
-							
-						}//bit bucket tayiz
-					}
-				}
-				headerList.add(header);
-			}
-			
-		}
-
-	}
-
-	public void contextAnalyize(Document doc) throws Exception {
-		NodeList cList = doc.getElementsByTagName("context");
-		for (int i = 0; i < cList.getLength(); i++) {
-			
-			Node cNode = cList.item(i);
-			Context context = new Context();
-			
-			if (cNode.getNodeType() == Node.ELEMENT_NODE) {
-				if(cNode.hasAttributes())
-				{
-					NamedNodeMap nodeMap=cNode.getAttributes();
-					for(int j=0;j<nodeMap.getLength();j++)
-					{
-						Node node=nodeMap.item(j);
-						context.getProperties().put(node.getNodeName(), node.getNodeValue());
-					}
-				}
-				if(cNode.hasChildNodes())
-				{
-					NodeList childList=cNode.getChildNodes();
-					for(int k=0;k<childList.getLength();k++)
-					{
-						Node nodes=childList.item(k);
-						if(nodes.getNodeType()==Node.ELEMENT_NODE)
-						{
-							context.getData().add(nodes.getTextContent());
-						}
-					}
-				}
-				contextList.add(context);
-			}
-		}
-	}
-
-	public void test(Document doc) {
-		NodeList nodeList = doc.getElementsByTagName("header");
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node tempNode = nodeList.item(i);
-			if (tempNode.getNodeType() == Node.ELEMENT_NODE) {
-				System.out.println("====================================");
-				System.out.println("Node Name=" + tempNode.getNodeName());
-				if (tempNode.hasAttributes()) {
-					NamedNodeMap nodeMap = tempNode.getAttributes();
-					for (int j = 0; j < nodeMap.getLength(); j++) {
-						Node node = nodeMap.item(j);
-						System.out.println("att name:" + node.getNodeName());
-						System.out.println("atrr value:" + node.getNodeValue());
-					}
-				}
-				if (tempNode.hasChildNodes()) {
-					NodeList tNodeList = tempNode.getChildNodes();
-					for (int k = 0; k < tNodeList.getLength(); k++) {
-						Node nodes = tNodeList.item(k);
-
-						if (nodes.getNodeType() == Node.ELEMENT_NODE) {
-
-							System.out.println("Node Name:"
-									+ nodes.getNodeName());
-							System.out.println("Node value"
-									+ nodes.getTextContent());
-						}
-					}
-				}
-			}
-		}
-		
-		
-	}
-
-	public void display() {
-		System.out.println("Page Information");
-		Iterator it = page.getProperties().entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry pair = (Map.Entry) it.next();
-			System.out.println(pair.getKey() + "...." + pair.getValue());
-			it.remove();
-		}
-		System.out.println("HeaderInformation");
-		for (Header h : headerList) {
-			System.out.println("-----");
-			//System.out.println(h.getHeaderId());
-			System.out.println(h.getData());
-			Iterator ith = h.getProperties().entrySet().iterator();
-			while (ith.hasNext()) {
-				Map.Entry hpair = (Map.Entry) ith.next();
-				System.out.println(hpair.getKey() + "..." + hpair.getValue());
-				ith.remove();
-			}
-		}
-		System.out.println("ContextInformation");
-		for (Context c : contextList) {
-			System.out.println("--------");
-			System.out.println("data");
-			for (String d : c.getData()) {
-				System.out.println(d);
-			}
-			System.out.println("properties");
-			Iterator cit = c.getProperties().entrySet().iterator();
-			while (cit.hasNext()) {
-				Map.Entry cpair = (Map.Entry) cit.next();
-				System.out.println(cpair.getKey() + "...." + cpair.getValue());
-				cit.remove();
-			}
-		}
 	}
 	//body tagli elementin propeties attributelari hashmapte tutulmasi islemi
 	public void analyzeBody(Document doc) throws Exception
@@ -368,10 +153,6 @@ public class XmlAnalyzer {
 						{
 							block.setFlow(attr.getNodeValue().toString());
 						}
-						else if(attr.getNodeName().toString().equals("type")) //type ozel olarak tutulmali
-						{
-							block.setType(attr.getNodeValue().toString());
-						} 
 						else if(attr.getNodeName().toString().equals("flow-ref")) //flow ref varsa bu deger de ozel olarak tutulmali
 						{
 							block.setFlow_ref_id(Integer.parseInt(attr.getNodeValue().toString()));
@@ -382,27 +163,11 @@ public class XmlAnalyzer {
 						}
 					}
 				}
+				block.setData(node.getTextContent());
 				blockList.add(block);
 			}
 		}
 	}
-
-	public List<Header> getHeaderList() {
-		return headerList;
-	}
-
-	public void setHeaderList(List<Header> headerList) {
-		this.headerList = headerList;
-	}
-
-	public List<Context> getContextList() {
-		return contextList;
-	}
-
-	public void setContextList(List<Context> contextList) {
-		this.contextList = contextList;
-	}
-
 	public Page getPage() {
 		return page;
 	}
@@ -426,31 +191,4 @@ public class XmlAnalyzer {
 	public void setBodyAttributes(HashMap<String, String> bodyAttributes) {
 		this.bodyAttributes = bodyAttributes;
 	}
-
-	public Block[][] getTemplate_matrisi() {
-		return template_matrisi;
-	}
-
-	public void setTemplate_matrisi(Block[][] template_matrisi) {
-		this.template_matrisi = template_matrisi;
-	}
-
-	public int getSatir() {
-		return satir;
-	}
-
-	public void setSatir(int satir) {
-		this.satir = satir;
-	}
-
-	public int getSutun() {
-		return sutun;
-	}
-
-	public void setSutun(int sutun) {
-		this.sutun = sutun;
-	}
-	
-	
-
 }

@@ -2,17 +2,53 @@ package model;
 
 public class Pdf_Data {
 	//this class receive data from pdf file
-	private double x;
-	private double y;
+	private Double x;
+	private Double y;
 	private double height;
 	private double width;
 	private double yscale;
 	private String c_data;
 	private String font;
 	private float font_size;
+	private int R;
+	private int G;
+	private int B;
+	
+	public Pdf_Data()
+	{
+	}
 	
 	
-	
+	public int getR() {
+		return R;
+	}
+
+
+	public void setR(int r) {
+		R = r;
+	}
+
+
+	public int getG() {
+		return G;
+	}
+
+
+	public void setG(int g) {
+		G = g;
+	}
+
+
+	public int getB() {
+		return B;
+	}
+
+
+	public void setB(int b) {
+		B = b;
+	}
+
+
 	public String getFont() {
 		return font;
 	}
@@ -31,17 +67,17 @@ public class Pdf_Data {
 	public void setC_data(String c_data) {
 		this.c_data = c_data;
 	}
-	public double getX() {
+	public Double getX() {
 		return x;
 	}
 	public void setX(double x) {
-		this.x = x;
+		this.x=new Double(x);
 	}
-	public double getY() {
+	public Double getY() {
 		return y;
 	}
 	public void setY(double y) {
-		this.y = y;
+		this.y=new Double(y);
 	}
 	public double getHeight() {
 		return height;

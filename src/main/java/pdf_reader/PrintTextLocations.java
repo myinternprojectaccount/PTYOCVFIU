@@ -10,7 +10,9 @@ import model.Pdf_Data;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDStream;
+import org.apache.pdfbox.pdmodel.graphics.PDGraphicsState;
 import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.util.ResourceLoader;
 import org.apache.pdfbox.util.TextPosition;
 
 import xml_to_xsl.Pdf_Data_Analyzer;
@@ -19,13 +21,15 @@ public class PrintTextLocations extends PDFTextStripper {
 
 	Pdf_Data_Analyzer main =new Pdf_Data_Analyzer();
     public PrintTextLocations() throws IOException {
+    	super(ResourceLoader.loadProperties(
+                "org/apache/pdfbox/resources/PageDrawer.properties", true));
         super.setSortByPosition(true);
     }
     public void getTextPosition() throws Exception {
 
         PDDocument document = null;
         try {
-            File input = new File("C:\\games\\sample.pdf");
+            File input = new File("/home/volkan/bitirme/pdf/test.pdf");
             document = PDDocument.load(input);
             if (document.isEncrypted()) {
                 document.decrypt("");
@@ -64,16 +68,26 @@ public class PrintTextLocations extends PDFTextStripper {
     	data.setWidth(text.getWidthDirAdj());
     	data.setYscale(text.getYScale());
     	data.setC_data(text.getCharacter());
-    	data.setFont(text.getFont().toString());
+    	data.setFont(text.getFont().getBaseFont());
     	data.setFont_size(text.getFontSize());
+    	//System.out.println(data.getFont());
+    	try {
+    		//renk atamasi yapiliyor...
+            PDGraphicsState graphicsState = getGraphicsState();
+            data.setR(graphicsState.getNonStrokingColor().getJavaColor().getRed());
+            data.setG(graphicsState.getNonStrokingColor().getJavaColor().getGreen());
+            data.setB(graphicsState.getNonStrokingColor().getJavaColor().getBlue());
+            System.out.println("R = " + graphicsState.getNonStrokingColor().getJavaColor().getRed());
+            System.out.println("G = " + graphicsState.getNonStrokingColor().getJavaColor().getGreen());
+            System.out.println("B = " + graphicsState.getNonStrokingColor().getJavaColor().getBlue());
+        }
+        catch (IOException ioe) {}
     	main.getDataList().add(data);
-    	
-    	
-              System.out.println(" String [x: " + text.getXDirAdj() + ", y: "
-            + text.getY() + ", height:" + text.getHeightDir()
-            + ", space: " + text.getWidthOfSpace() + ", width: "
-            + text.getWidthDirAdj() + ", yScale: " + text.getYScale() + "]"
-            + text.getCharacter());
+//              System.out.println(" String [x: " + text.getXDirAdj() + ", y: "
+//            + text.getY() + ", height:" + text.getHeightDir()
+//            + ", space: " + text.getWidthOfSpace() + ", width: "
+//            + text.getWidthDirAdj() + ", yScale: " + text.getYScale() + "]"
+//            + text.getCharacter());
         
     }
    

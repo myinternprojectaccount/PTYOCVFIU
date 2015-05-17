@@ -8,8 +8,17 @@ public class Data_To_Xml {
 	private double height;
 	private float font_size;
 	private String font;
+	private String color;
 	
 	
+	
+	
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
 	public float getFont_size() {
 		return font_size;
 	}

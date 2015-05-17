@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,13 +11,24 @@ public class Block {
 	private String flow;
 	private String type;
 	private int flow_ref_id;
-	private List<String> komsular;
+	private List<Block> komsular;
+	private String data;
 	private HashMap<String,String> properties;
 	public Block()
 	{
 		properties=new HashMap<String,String>();
+		komsular=new ArrayList<Block>();
 		
 	}
+	
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
 	public int getBlock_id() {
 		return block_id;
 	}
@@ -47,10 +59,10 @@ public class Block {
 	public void setFlow_ref_id(int flow_ref_id) {
 		this.flow_ref_id = flow_ref_id;
 	}
-	public List<String> getKomsular() {
+	public List<Block> getKomsular() {
 		return komsular;
 	}
-	public void setKomsular(List<String> komsular) {
+	public void setKomsular(List<Block> komsular) {
 		this.komsular = komsular;
 	}
 	

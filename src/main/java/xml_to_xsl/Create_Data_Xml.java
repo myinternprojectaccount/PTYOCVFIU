@@ -26,10 +26,10 @@ public class Create_Data_Xml {
 		{
 			ex.printStackTrace();
 		}
-		System.out.println(da.getXmlDataList().size());
-		for(Data_To_Xml d:da.getXmlDataList())
-		{
-			System.out.println(d.getData()+"   " +d.getX1() + "   " + d.getY1() +"  "+d.getWidth());
-		}
+//		System.out.println(da.getXmlDataList().size());
+//		for(Data_To_Xml d:da.getXmlDataList())
+//		{
+//			System.out.println(d.getData()+"   " +d.getX1() + "   " + d.getY1() +"  "+d.getWidth());
+//		}
 	}
 }

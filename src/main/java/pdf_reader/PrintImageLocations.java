@@ -1,4 +1,4 @@
-package test;
+package pdf_reader;
 
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.exceptions.InvalidPasswordException;

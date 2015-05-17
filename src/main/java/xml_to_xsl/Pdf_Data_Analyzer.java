@@ -52,6 +52,8 @@ public class Pdf_Data_Analyzer {
 		page.setAttribute("margin-top", "10");
 		root.appendChild(page);
 		int temp=0;
+		int satir=0; //bu deger yan yana olacak blocklar icin margin top hesabinda kullanilacaktir.
+		//Bu fonksiyon datalari analiz eder her kelime bir block mantigi ile islem yapilmak istenmektedir.
 		for(int i=0;i<xmlDataList.size();i++)
 		{
 			//we use block definition inside xml for the word which got from pdf file.
@@ -63,90 +65,75 @@ public class Pdf_Data_Analyzer {
 				long top;
 				left=Math.round(xmlDataList.get(i).getX1());
 				top=Math.round(xmlDataList.get(i).getY1());
-				temp=i;
+				temp=i-1;
 				
 				Element element=doc.createElement("block");
 				element.setAttribute("margin-left",String.valueOf(left));
 				element.setAttribute("margin-top",String.valueOf(top));
 				element.setAttribute("width",String.valueOf(Math.round(xmlDataList.get(i).getWidth())));
-				element.setAttribute("font-size",String.valueOf(Math.round(dataList.get(i).getFont_size())));
-				element.setAttribute("font-family",dataList.get(i).getFont());
-				element.setAttribute("id", String.valueOf(i));
+				element.setAttribute("font-size",String.valueOf(Math.round(xmlDataList.get(i).getFont_size())));
+				element.setAttribute("font-family",xmlDataList.get(i).getFont());
+				element.setAttribute("id", String.valueOf(i+1));
 				element.setAttribute("flow", "bottom");
 				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
+				element.setAttribute("color", xmlDataList.get(i).getColor());
 				root.appendChild(element);
 				continue;
 			}
-			if(i==xmlDataList.size()-1)
+			//y degerleri esit ise ayni satirda olmasi gereken blocklardir.
+			long a,b;
+			a=Math.round(xmlDataList.get(i).getY1());
+			b=Math.round(xmlDataList.get(i-1).getY1());
+			if(a==b)//y degerleri ayni
 			{
-				long left;
-				long top;
-				if(String.valueOf(xmlDataList.get(i).getY1()).equals(String.valueOf(xmlDataList.get(i).getY1())))
-				{
-					left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
-					top=Math.round(dataList.get(i).getY()-xmlDataList.get(temp).getY1());
-				}
-				else
-				{
-					left=Math.round(xmlDataList.get(i).getX1());
-					top=Math.round(dataList.get(i).getY()-xmlDataList.get(temp).getY1());
-				}
-				left=Math.round(xmlDataList.get(i).getX1());
-				top=Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(i-1).getY1());//hop bidakka:D onceki hesaplama
-				Element element=doc.createElement("block");//burda ince hesap yapmak lazims
-				element.setAttribute("margin-left",String.valueOf(left));
-				element.setAttribute("margin-top",String.valueOf(top));
-				element.setAttribute("width",String.valueOf(dataList.get(i).getWidth()));
-				element.setAttribute("font-size",String.valueOf(Math.round(dataList.get(i).getFont_size())));
-				element.setAttribute("font-family",dataList.get(i).getFont());
-				element.setAttribute("id", String.valueOf(i));
-				element.setAttribute("flow", "bottom");
-				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
-				root.appendChild(element);
 				
-				break;
-			}
-			if(String.valueOf(xmlDataList.get(i).getY1()).equals(String.valueOf(xmlDataList.get(i+1).getY1())))
-			{
-				int value=0;
+				long left=0;
+				long top=0;
 				//i ve i+1 y degerleri esit ise bunlar ayni satirdadir.
-				if(temp-1<0)
+				if(temp<0)
 				{
-					value=0;
+					//hala ilk satirda dolasiyoruz
+					top=Math.round(dataList.get(temp+1).getY());
+					left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
+				}
+				else if(temp>0)
+				{
+					
+					//artik ilk satirda degiliz ve margin top bir onceki y degeri ile fark olarak hesaplanmali...
+					top=Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(temp-1).getY1());
+					left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
 				}
 				else if(temp==0)
 				{
-					value=temp-1;
+					top=Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(temp).getY1());
+					left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
 				}
-				long left;
-				long top;
-				System.out.println("value:"+value);
-				top=Math.round(dataList.get(i).getY()-xmlDataList.get(value).getY1());
-				left=Math.round(xmlDataList.get(i).getX1()-(xmlDataList.get(i-1).getX1()+xmlDataList.get(i-1).getWidth()));
 				Element element=doc.createElement("block");
 				element.setAttribute("margin-left",String.valueOf(left));
 				element.setAttribute("margin-top",String.valueOf(top));
-				element.setAttribute("width",String.valueOf(dataList.get(i).getWidth()));
-				element.setAttribute("font-size",String.valueOf(Math.round(dataList.get(i).getFont_size())));
-				element.setAttribute("font-family",dataList.get(i).getFont());
-				element.setAttribute("id", String.valueOf(i));
+				element.setAttribute("width",String.valueOf(Math.round(xmlDataList.get(i).getWidth())));
+				element.setAttribute("font-size",String.valueOf(Math.round(xmlDataList.get(i).getFont_size())));
+				element.setAttribute("font-family",xmlDataList.get(i).getFont());
+				element.setAttribute("id", String.valueOf(i+1));
 				element.setAttribute("flow", "near");
-				element.setAttribute("flow-ref",String.valueOf(temp));
+				element.setAttribute("flow-ref",String.valueOf(temp+1));
 				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
+				element.setAttribute("color", xmlDataList.get(i).getColor());
 				root.appendChild(element);
 				
 			}
 			else
 			{
-				temp=i;
+				temp=i-1;
 				Element element=doc.createElement("block");
-				element.setAttribute("margin-left",String.valueOf(xmlDataList.get(i).getX1()));
-				element.setAttribute("margin-top",String.valueOf(Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(i).getY1())));
-				element.setAttribute("width",String.valueOf(xmlDataList.get(i).getWidth()));
-				element.setAttribute("font-size", String.valueOf(Math.round(dataList.get(i).getFont_size())));
-				element.setAttribute("font-family",dataList.get(i).getFont());
-				element.setAttribute("id", String.valueOf(i));
+				element.setAttribute("margin-left",String.valueOf(Math.round(xmlDataList.get(i).getX1())));
+				element.setAttribute("margin-top",String.valueOf(Math.round(xmlDataList.get(i).getY1()-xmlDataList.get(temp).getY1())));
+				element.setAttribute("width",String.valueOf(Math.round(xmlDataList.get(i).getWidth())));
+				element.setAttribute("font-size", String.valueOf(Math.round(xmlDataList.get(i).getFont_size())));
+				element.setAttribute("font-family",xmlDataList.get(i).getFont());
+				element.setAttribute("id", String.valueOf(i+1));
 				element.setAttribute("flow", "bottom");
+				element.setAttribute("color", xmlDataList.get(i).getColor());
 				element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
 				root.appendChild(element);
 			}
@@ -158,7 +145,7 @@ public class Pdf_Data_Analyzer {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(new File(
-				"C:\\games\\olusan.xml").getPath());
+				"/home/volkan/bitirme/xml/pdf_to_xml.xml").getPath());
 
 		transformer.transform(source, result);
 
@@ -196,13 +183,14 @@ public class Pdf_Data_Analyzer {
 			{
 				temp.setWidth(Double.valueOf(Integer.parseInt(w[0])));
 			}
+			
 		}
 	}
 	public void setXmlData() {
 		StringBuilder stb = new StringBuilder();
 		Data_To_Xml dtx=new Data_To_Xml();
 		Pdf_Data temp=new Pdf_Data();
-		dataList_guncelle();
+		//dataList_guncelle();
 		for (int i = 0; i < dataList.size(); ++i) {
 			if(i==0)
 			{
@@ -212,6 +200,7 @@ public class Pdf_Data_Analyzer {
 			{
 				stb.append(dataList.get(i).getC_data());
 				dtx.setX1(temp.getX());
+				dtx.setColor("rgb("+String.valueOf(temp.getR())+","+String.valueOf(temp.getG())+","+temp.getB()+")");
 				dtx.setY1(temp.getY());
 				dtx.setFont(temp.getFont());
 				dtx.setFont_size(temp.getFont_size());
@@ -222,12 +211,18 @@ public class Pdf_Data_Analyzer {
 				break;
 				
 			}
-			if(String.valueOf(dataList.get(i).getY()).equals(String.valueOf(dataList.get(i+1).getY())))
+			long a,b;
+			a=Math.round(dataList.get(i).getY());
+			b=Math.round(dataList.get(i+1).getY());
+			if(a==b)
 			{
 				
 				
 				Double veri=dataList.get(i+1).getX()-dataList.get(i).getX();
-				if(veri<=dataList.get(i).getWidth())
+				Long veri1,veri2;
+				veri1=Math.round(veri);
+				veri2=Math.round(dataList.get(i).getWidth());
+				if(veri1==veri2)
 				{
 					stb.append(dataList.get(i).getC_data());
 									
@@ -242,6 +237,7 @@ public class Pdf_Data_Analyzer {
 					dtx.setHeight(temp.getHeight());
 					dtx.setWidth(dataList.get(i).getX()-temp.getX());
 					dtx.setData(stb.toString());
+					dtx.setColor("rgb("+String.valueOf(temp.getR())+","+String.valueOf(temp.getG())+","+temp.getB()+")");
 					xmlDataList.add(dtx);
 					dtx=new Data_To_Xml();
 					temp=dataList.get(i+1);
@@ -253,6 +249,7 @@ public class Pdf_Data_Analyzer {
 				//no same line
 				stb.append(dataList.get(i).getC_data());
 				dtx.setX1(temp.getX());
+				dtx.setColor("rgb("+String.valueOf(temp.getR())+","+String.valueOf(temp.getG())+","+temp.getB()+")");
 				dtx.setY1(temp.getY());
 				dtx.setFont(temp.getFont());
 				dtx.setFont_size(temp.getFont_size());
