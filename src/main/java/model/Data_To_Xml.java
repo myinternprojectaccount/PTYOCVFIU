@@ -9,10 +9,21 @@ public class Data_To_Xml {
 	private float font_size;
 	private String font;
 	private String color;
+	private double page_width;
+	private double page_height;
 	
-	
-	
-	
+	public double getPage_width() {
+		return page_width;
+	}
+	public void setPage_width(double page_width) {
+		this.page_width = page_width;
+	}
+	public double getPage_height() {
+		return page_height;
+	}
+	public void setPage_height(double page_height) {
+		this.page_height = page_height;
+	}
 	public String getColor() {
 		return color;
 	}

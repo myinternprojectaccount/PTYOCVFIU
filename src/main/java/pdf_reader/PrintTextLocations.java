@@ -20,6 +20,8 @@ import xml_to_xsl.Pdf_Data_Analyzer;
 public class PrintTextLocations extends PDFTextStripper {
 
 	Pdf_Data_Analyzer main =new Pdf_Data_Analyzer();
+	private double height;
+	private double width;
     public PrintTextLocations() throws IOException {
     	super(ResourceLoader.loadProperties(
                 "org/apache/pdfbox/resources/PageDrawer.properties", true));
@@ -29,17 +31,23 @@ public class PrintTextLocations extends PDFTextStripper {
 
         PDDocument document = null;
         try {
-            File input = new File("/home/volkan/bitirme/pdf/test.pdf");
+            File input = new File("/home/volkan/bitirme/pdf/test2.pdf");
             document = PDDocument.load(input);
             if (document.isEncrypted()) {
                 document.decrypt("");
+            
             }
+            
             PrintTextLocations printer = new PrintTextLocations();
             List allPages = document.getDocumentCatalog().getAllPages();
             for (int i = 0; i < allPages.size(); i++) {
                 PDPage page = (PDPage) allPages.get(i);
+                //sayfa genisligi ve yuksekligi
+                width=page.getMediaBox().getWidth();
+                height=page.getMediaBox().getHeight();
                 System.out.println("Processing page: " + i);
                 PDStream contents = page.getContents();
+                
                 if (contents != null) {
                     printer.processStream(page, page.findResources(), page.getContents().getStream());
                 }
@@ -70,6 +78,9 @@ public class PrintTextLocations extends PDFTextStripper {
     	data.setC_data(text.getCharacter());
     	data.setFont(text.getFont().getBaseFont());
     	data.setFont_size(text.getFontSize());
+    	data.setPage_height(height);
+    	data.setPage_width(width);
+    	data.setSpace_width(text.getWidthOfSpace());
     	//System.out.println(data.getFont());
     	try {
     		//renk atamasi yapiliyor...

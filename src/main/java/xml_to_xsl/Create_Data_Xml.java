@@ -17,10 +17,10 @@ public class Create_Data_Xml {
 	{
 		Pdf_Data_Analyzer	da=new Pdf_Data_Analyzer();
 		da.getData();
-		da.setXmlData();
+		da.setXmlDataPerSentence();
 		try
 		{
-			da.create_Xml();
+			da.create_Xml_Sentence();
 		}
 		catch(Exception ex)
 		{

@@ -13,12 +13,46 @@ public class Pdf_Data {
 	private int R;
 	private int G;
 	private int B;
+	private double page_width;
+	private double page_height;
+	private double space_width;
 	
+	
+	public double getSpace_width() {
+		return space_width;
+	}
+
+
+	public void setSpace_width(double space_width) {
+		this.space_width = space_width;
+	}
+
+
 	public Pdf_Data()
 	{
 	}
 	
 	
+	public double getPage_width() {
+		return page_width;
+	}
+
+
+	public void setPage_width(double page_width) {
+		this.page_width = page_width;
+	}
+
+
+	public double getPage_height() {
+		return page_height;
+	}
+
+
+	public void setPage_height(double page_height) {
+		this.page_height = page_height;
+	}
+
+
 	public int getR() {
 		return R;
 	}
