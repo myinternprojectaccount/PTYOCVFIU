@@ -189,7 +189,7 @@ public class Pdf_Data_Analyzer {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(new File(
-				"/home/volkan/bitirme/xml/pdf_to_xml.xml").getPath());
+				"/home/volkanavci/bitirme/xml/pdf_to_xml.xml").getPath());
 
 		transformer.transform(source, result);
 
@@ -349,6 +349,9 @@ public class Pdf_Data_Analyzer {
 				dtx.setWidth(dataList.get(i).getX()-temp.getX());
 				dtx.setData(stb.toString());
 				dtx.setColor("rgb("+String.valueOf(temp.getR())+","+String.valueOf(temp.getG())+","+temp.getB()+")");
+				dtx.setR(temp.getR());
+				dtx.setG(temp.getG());
+				dtx.setB(temp.getB());
 				xmlDataList.add(dtx);
 				dtx=new Data_To_Xml();
 				temp=dataList.get(i+1);

@@ -21,12 +21,12 @@ public class PdfCreator {
  
             // Setup directories
             File baseDir = new File("/home/");
-            File outDir = new File(baseDir, "volkan/bitirme/pdf");
+            File outDir = new File(baseDir, "volkanavci/bitirme/pdf");
             outDir.mkdirs();
  
             // Setup input and output files 
-            File xmlfile = new File(baseDir, "volkan/bitirme/xml/template.xml");
-            File xsltfile = new File(baseDir,"volkan/bitirme/xsl/denedik3.xsl");
+            File xmlfile = new File(baseDir, "volkanavci/bitirme/xml/template.xml");
+            File xsltfile = new File(baseDir,"volkanavci/bitirme/xsl/denedik3.xsl");
             File pdffile = new File(outDir, "bitirme.pdf");
  
             System.out.println("Input: XML (" + xmlfile + ")");

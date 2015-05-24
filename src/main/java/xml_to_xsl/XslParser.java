@@ -128,7 +128,7 @@ public class XslParser {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(new File(
-				"/home/volkan/bitirme/xsl/denedik3.xsl").getPath());
+				"/home/volkanavci/bitirme/xsl/denedik3.xsl").getPath());
 
 		transformer.transform(source, result);
 

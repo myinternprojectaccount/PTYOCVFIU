@@ -57,7 +57,7 @@ public class XmlAnalyzer {
 	}
 	public void analyize() {
 		try {
-			File xml_file = new File("/home/volkan/bitirme/xml/pdf_to_xml.xml");
+			File xml_file = new File("/home/volkanavci/bitirme/xml/pdf_to_xml.xml");
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder builder = dbFactory.newDocumentBuilder();
@@ -80,6 +80,7 @@ public class XmlAnalyzer {
 			//header ve context in yanyana oldugu tasarim modellemesi
 			//header ve contextin yan yana durumu header ........
 								    // ........
+			System.out.println("xml okunamadi...");
 
 		}
 	}
