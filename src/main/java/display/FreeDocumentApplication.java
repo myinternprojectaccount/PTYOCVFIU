@@ -14,18 +14,16 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.text.Highlighter;
-import javax.swing.text.Highlighter.Highlight;
-import javax.swing.text.StyledEditorKit;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import model.Data_To_Xml;
 import xml_to_xsl.Pdf_Data_Analyzer;
@@ -67,19 +65,38 @@ public class FreeDocumentApplication extends JFrame {
 		
 		//burada bos bir text area tasarlanir...
 		JScrollPane pane=new JScrollPane();
-		JEditorPane text=new JEditorPane();
+		JTextPane text=new JTextPane();
 		text.setName("text_area");
 		text.setBorder(BorderFactory.createEmptyBorder(8,8,8,8));
 		pane.getViewport().add(text);
 		text.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
 			{
+				JTextPane text=(JTextPane)e.getComponent();
+				 StyledDocument doc=text.getStyledDocument();
 				if((e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON1))
 				{
-					JEditorPane text=(JEditorPane)e.getComponent();
-					 JOptionPane.showMessageDialog(null,text.getSelectedText());
-					 JTextArea test=new JTextArea();
+					
+					 int start=text.getSelectionStart();
+					 int end=text.getSelectionEnd();
+					 if (start == end) { // No selection, cursor position.
+					        return;
+					    }
+					    if (start > end) { // Backwards selection?
+					        int life = start;
+					        start = end;
+					        end = life;
+					    }
+					    int fsize=Integer.parseInt(String.valueOf(Math.round(secili.getFont_size())));
+					    Style style = text.addStyle("base", null);
+					    Color color=new Color(secili.getR(),secili.getG(),secili.getB());
+					    StyleConstants.setFontSize(style, fsize);
+					    StyleConstants.setFontFamily(style, secili.getFont());
+					    StyleConstants.setForeground(style,color);
+					    //style = textPane.getStyle("MyHilite");
+					    doc.setCharacterAttributes(start, end - start, style, false);					 
 				}
+				
 				
 			}
 		});
@@ -141,7 +158,6 @@ public class FreeDocumentApplication extends JFrame {
 		                    		hareket=0;
 		                    	}
 		                    }
-		                    JOptionPane.showMessageDialog(null,pane.getText()+"..."+secili.getData()+"..."+secili.getColor());
 		                }
 		            }
 			});
