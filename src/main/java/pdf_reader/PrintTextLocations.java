@@ -31,7 +31,7 @@ public class PrintTextLocations extends PDFTextStripper {
 
         PDDocument document = null;
         try {
-            File input = new File("/home/volkanavci/bitirme/pdf/test2.pdf");
+            File input = new File("/home/volkanavci/bitirme/pdf/hasim.pdf");
             document = PDDocument.load(input);
             if (document.isEncrypted()) {
                 document.decrypt("");
@@ -76,11 +76,27 @@ public class PrintTextLocations extends PDFTextStripper {
     	data.setWidth(text.getWidthDirAdj());
     	data.setYscale(text.getYScale());
     	data.setC_data(text.getCharacter());
-    	data.setFont(text.getFont().getBaseFont());
+    	String [] fonts=text.getFont().getBaseFont().split(",");
+    	data.setFont(fonts[0]);
     	data.setFont_size(text.getFontSize());
     	data.setPage_height(height);
     	data.setPage_width(width);
     	data.setSpace_width(text.getWidthOfSpace());
+    	//font hesapla
+    	System.out.println(data.getFont());
+    	System.out.println(text.getFontSize());
+    	int bold=Math.round(text.getFont().getFontDescriptor().getFontWeight());
+    	if(bold>500)
+    	{
+    		data.setBold("bold");
+    	}
+    	float italic=text.getFont().getFontDescriptor().getItalicAngle();
+    	if(italic!=0)
+    	{
+    		data.setItalic("italic");
+    	}
+    	System.out.println(text.getFont().getFontDescriptor().getFontWeight());
+    	//System.out.println(data.getBold()+"*****"+data.getItalic());
     	//System.out.println(data.getFont());
     	try {
     		//renk atamasi yapiliyor...
@@ -88,9 +104,6 @@ public class PrintTextLocations extends PDFTextStripper {
             data.setR(graphicsState.getNonStrokingColor().getJavaColor().getRed());
             data.setG(graphicsState.getNonStrokingColor().getJavaColor().getGreen());
             data.setB(graphicsState.getNonStrokingColor().getJavaColor().getBlue());
-            System.out.println("R = " + graphicsState.getNonStrokingColor().getJavaColor().getRed());
-            System.out.println("G = " + graphicsState.getNonStrokingColor().getJavaColor().getGreen());
-            System.out.println("B = " + graphicsState.getNonStrokingColor().getJavaColor().getBlue());
         }
         catch (IOException ioe) {}
     	main.getDataList().add(data);

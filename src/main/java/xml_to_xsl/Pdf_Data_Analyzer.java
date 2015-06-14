@@ -180,6 +180,8 @@ public class Pdf_Data_Analyzer {
 			element.setAttribute("font-size",String.valueOf(Math.round(xmlDataList.get(i).getFont_size())));
 			element.setAttribute("font-family",xmlDataList.get(i).getFont());
 			element.setAttribute("id", String.valueOf(i+1));
+			element.setAttribute("bold",xmlDataList.get(i).getBold());
+			element.setAttribute("italic", xmlDataList.get(i).getItalic());
 			element.appendChild(doc.createTextNode(xmlDataList.get(i).getData()));
 			element.setAttribute("color", xmlDataList.get(i).getColor());
 			root.appendChild(element);
@@ -315,6 +317,9 @@ public class Pdf_Data_Analyzer {
 				stb.append(dataList.get(i).getC_data());
 				dtx.setX1(temp.getX());
 				dtx.setColor("rgb("+String.valueOf(temp.getR())+","+String.valueOf(temp.getG())+","+temp.getB()+")");
+				dtx.setR(temp.getR());
+				dtx.setG(temp.getG());
+				dtx.setB(temp.getB());
 				dtx.setY1(temp.getY());
 				dtx.setFont(temp.getFont());
 				dtx.setFont_size(temp.getFont_size());
@@ -323,6 +328,8 @@ public class Pdf_Data_Analyzer {
 				dtx.setData(stb.toString());
 				dtx.setPage_height(dataList.get(0).getPage_height());
 				dtx.setPage_width(dataList.get(0).getPage_width());
+				dtx.setBold(temp.getBold());
+				dtx.setItalic(temp.getItalic());
 				xmlDataList.add(dtx);
 				break;
 				
@@ -352,6 +359,8 @@ public class Pdf_Data_Analyzer {
 				dtx.setR(temp.getR());
 				dtx.setG(temp.getG());
 				dtx.setB(temp.getB());
+				dtx.setBold(temp.getBold());
+				dtx.setItalic(temp.getItalic());
 				xmlDataList.add(dtx);
 				dtx=new Data_To_Xml();
 				temp=dataList.get(i+1);

@@ -16,8 +16,29 @@ public class Pdf_Data {
 	private double page_width;
 	private double page_height;
 	private double space_width;
+	private String bold;
+	private String italic;
 	
-	
+	public String getBold() {
+		return bold;
+	}
+
+
+	public void setBold(String bold) {
+		this.bold = bold;
+	}
+
+
+	public String getItalic() {
+		return italic;
+	}
+
+
+	public void setItalic(String italic) {
+		this.italic = italic;
+	}
+
+
 	public double getSpace_width() {
 		return space_width;
 	}

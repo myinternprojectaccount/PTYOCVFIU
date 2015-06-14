@@ -14,7 +14,41 @@ public class Data_To_Xml {
 	private int R;
 	private int G;
 	private int B;
-	
+	int posa;
+	int posb;
+	boolean isUpdate;
+	String bold;
+	String italic;
+	public String getBold() {
+		return bold;
+	}
+	public void setBold(String bold) {
+		this.bold = bold;
+	}
+	public String getItalic() {
+		return italic;
+	}
+	public void setItalic(String italic) {
+		this.italic = italic;
+	}
+	public boolean isUpdate() {
+		return isUpdate;
+	}
+	public void setUpdate(boolean isUpdate) {
+		this.isUpdate = isUpdate;
+	}
+	public int getPosa() {
+		return posa;
+	}
+	public void setPosa(int posa) {
+		this.posa = posa;
+	}
+	public int getPosb() {
+		return posb;
+	}
+	public void setPosb(int posb) {
+		this.posb = posb;
+	}
 	public int getR() {
 		return R;
 	}
